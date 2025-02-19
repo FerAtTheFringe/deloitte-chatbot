@@ -3,22 +3,21 @@
 import React, { useState } from "react";
 import styles from "./page.module.css";
 import Chat from "../../components/chat";
+import { getCompanies } from "@/app/utils/companies";
 import { fetchTransactions } from "@/app/utils/transactions";
 import { humanQueryToSQL } from "@/app/utils/humanQueryToSQL";
+import { fetchOpportunities } from "../../utils/opportunities";
+import CompanyWidget from "@/app/components/company-widget";
 import { fetchLicenses } from "@/app/utils/licenses";
-import TransactionsWidget from "@/app/components/transactions-widget";
-import LicensesWidget from "@/app/components/licenses-widget";
-import { fetchCargos } from "@/app/utils/cargos";
-import { fetchCompanies } from "@/app/utils/companies";
+import { fetchWebSearch } from "@/app/utils/websearch";
 
 const FunctionCalling = () => {
-  const [transactionsData, setTransactionsData] = useState([]);
-  const [licensesData, setLicensesData] = useState([]);
-  const showColumn = transactionsData.length > 0 || licensesData.length > 0;
+  const [weatherData, setWeatherData] = useState({});
+  const [companiesData, setCompaniesData] = useState([]);
 
   const clearStates = () => {
-    setTransactionsData([]);
-    setLicensesData([]);
+    // setWeatherData({});
+    setCompaniesData([]);
   };
 
   const functionCallHandler = async (call) => {
@@ -46,14 +45,11 @@ const FunctionCalling = () => {
       try {
         const data = await fetchTransactions({ ...args });
 
-        if (!data) {
+        if (!data || data.length === 0) {
           throw new Error("No se encontraron transacciones");
         }
-        setTransactionsData(data);
-        return JSON.stringify({
-          num_total_registros: data.length,
-          registros: data.slice(0, 235),
-        });
+
+        return JSON.stringify(data);
       } catch (error) {
         console.error("Error fetching transactions:", error);
         return JSON.stringify({
@@ -66,14 +62,11 @@ const FunctionCalling = () => {
       try {
         const data = await fetchLicenses({ ...args });
 
-        if (!data) {
+        if (!data || data.length === 0) {
           throw new Error("No se encontraron licencias");
         }
-        setLicensesData(data);
-        return JSON.stringify({
-          num_total_registros: data.length,
-          registros: data.slice(0, 180),
-        });
+
+        return JSON.stringify(data);
       } catch (error) {
         console.error("Error fetching licenses:", error);
         return JSON.stringify({
@@ -82,59 +75,56 @@ const FunctionCalling = () => {
       }
     }
 
-    if (call.function.name === "query_cargos") {
+    if (call.function.name === "web_search") {
       try {
-        const data = await fetchCargos({ ...args });
+        const data = await fetchWebSearch({ ...args });
 
-        if (!data) {
-          throw new Error("No se encontró información sobre cargos");
-        }
-        return JSON.stringify({
-          num_total_registros: data.length,
-          registros: data.slice(0, 100),
-        });
+        return JSON.stringify(data);
       } catch (error) {
-        console.error("Error fetching cargos:", error);
+        console.error("Error fetching web search:", error);
         return JSON.stringify({
-          error: "Error al obtener información de personas y cargos",
+          error: "No se pudieron obtener datos de la web",
         });
       }
     }
 
-    if (call.function.name === "query_empresas") {
+    if (call.function.name === "search_properties") {
       try {
-        const data = await fetchCompanies({ ...args });
-
-        if (!data) {
-          throw new Error("No se encontraron companies");
-        }
-        return JSON.stringify({
-          num_total_registros: data.length,
-          registros: data.slice(0, 100),
+        const data = await fetchOpportunities({
+          nombre_provincia: args.nombre_provincia,
+          days_ago: args.days_ago,
+          local_price_to: args.local_price_to,
+          local_price_from: args.local_price_from,
+          area_from: args.area_from,
+          area_to: args.area_to,
+          n_rooms_from: args.n_rooms_from,
+          n_baths_from: args.n_baths_from,
         });
+
+        if (!data || data.length === 0) {
+          throw new Error("No se encontraron oportunidades");
+        }
+
+        return JSON.stringify(data);
       } catch (error) {
-        console.error("Error fetching companies:", error);
+        console.error("Error fetching opportunities:", error);
         return JSON.stringify({
-          error: "Error al obtener información de empresas",
+          error: "No se pudieron obtener oportunidades",
         });
       }
     }
 
-    console.error(`Función "${call.function.name}" no encontrada`);
     return JSON.stringify({ error: "Función no reconocida" });
   };
 
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        {showColumn && (
+        {companiesData.length > 0 && (
           <div className={styles.column}>
-            {transactionsData.length > 0 && (
-              <TransactionsWidget transactions={transactionsData} />
-            )}
-            {licensesData.length > 0 && (
-              <LicensesWidget licenses={licensesData} />
-            )}
+            {/* <WeatherWidget {...weatherData} /> */}
+            {/* <FileViewer /> */}
+            <CompanyWidget companies={companiesData} />
           </div>
         )}
 

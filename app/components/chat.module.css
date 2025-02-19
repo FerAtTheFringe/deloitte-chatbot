@@ -36,7 +36,8 @@
 
 .button {
   padding: 8px 24px;
-  background-color: #000;
+  /* background-color: #000; */
+  background: linear-gradient(135deg, #0F172A, #1E40AF, #3B82F6);;
   color: white;
   border: none;
   font-size: 1em;
@@ -82,19 +83,6 @@
 
 .assistantMessage {
   background-color: #efefef;
-  position: relative;
-}
-
-.source {
-  margin-top: 12px;
-  align-self: flex-end;
-  font-size: 0.75em;
-  color: #000;
-  border: solid 1px #000;
-  border-color: #000;
-  padding: 2px 8px;
-  border-radius: 12px;
-  display: inline-block;
 }
 
 .codeMessage {

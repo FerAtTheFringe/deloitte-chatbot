@@ -49,7 +49,7 @@ export async function fetchTransactions(params) {
     console.log("TRANSACTIONS", json.data);
 
     // SLICED to avoid large responses error
-    return json.data;
+    return json.data.slice(0, 235);
   } catch (error) {
     console.error("Error en fetchTransactions:", error);
     throw error;
