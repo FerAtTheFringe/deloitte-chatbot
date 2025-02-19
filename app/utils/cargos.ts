@@ -1,18 +1,14 @@
-export async function fetchCompanies(params) {
+export async function fetchCargos(params) {
   try {
     const queryParams = new URLSearchParams();
 
     const optionalParams = [
       "cif",
       "empresa",
-      "es_comprador",
-      "es_vendedor",
-      "es_promotor",
-      "es_constructor",
-      "tipo",
-      "empleados",
-      "unidades",
-      "localidad",
+      "persona",
+      "cargo",
+      "desde",
+      "hasta",
     ];
 
     console.log("PARAMS", params);
@@ -29,7 +25,7 @@ export async function fetchCompanies(params) {
     });
 
     const queryString = queryParams.toString();
-    const url = `/api/companies${queryString ? `?${queryString}` : ""}`;
+    const url = `/api/cargos${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -39,15 +35,15 @@ export async function fetchCompanies(params) {
     });
 
     if (!response.ok) {
-      throw new Error("Error al obtener datos de Tinybird para empresas");
+      throw new Error("Error al obtener datos de Tinybird para cargos");
     }
 
     const json = await response.json();
-    console.log("COMPANIES", json.data);
+    console.log("CARGOS", json.data);
 
     return json.data;
   } catch (error) {
-    console.error("Error en fetchCompanies:", error);
+    console.error("Error en fetchCargos:", error);
     throw error;
   }
 }
