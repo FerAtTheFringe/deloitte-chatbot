@@ -5,10 +5,10 @@ import { assistantId } from "./assistant-config";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "AFFLUX assistant",
+  title: "Deloitte assistant",
   description: "",
   icons: {
-    icon: "/afflux-favicon.png",
+    icon: "/deloitte-favicon.png",
   },
 };
 
